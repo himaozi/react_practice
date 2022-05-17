@@ -45,28 +45,40 @@ const columns = [
 
 
 export default class BookLists extends React.Component {
-    state = this.props.state
-    
+    state = {
+        pageSize: 10,
+        current: 1,
+        total: 0,
+        selected: true,
+        bookList: [],
+    }
+
+    // 父组件传递的bookList在这里接收 通过setState更新bookList数据继而重新渲染table
+    componentWillReceiveProps(nextProps) {
+        this.setState({ bookList: nextProps.bookList })
+    }
 
     componentDidMount() {
-        const { pageSize, current,book } = this.state;
-        getPagedBooksList(current, pageSize,book).then(res => {
-            this.setState({
-                bookList: res.data.data.records,
-                total: res.data.data.total
-            })
-        })
-    }
-    changePage = (currPageNO) => {
-        const { pageSize,book } = this.state;
-        // state里的值的改变必须用setstate  值改变后 视图自动变化
-        // react用一个公式来表示就是 UI=f(state) 我们只需要关系state的管理,UI由react去变化
-        getPagedBooksList(currPageNO, pageSize,book).then(res => {
+        const { pageSize, current } = this.state;
+        getPagedBooksList(current, pageSize).then(res => {
             this.setState({
                 bookList: res.data.data.records,
                 total: res.data.data.total,
-                current: currPageNO
             })
+        })
+    }
+    changePage = (currPageNO, currPageSize) => {
+        // state里的值的改变必须用setstate  值改变后 视图自动变化
+        // react用一个公式来表示就是 UI=f(state) 我们只需要关系state的管理,UI由react去变化
+        getPagedBooksList(currPageNO, currPageSize).then(res => {
+            this.setState({
+                bookList: res.data.data.records,
+                total: res.data.data.total,
+                current: currPageNO,
+                pageSize: currPageSize
+            })
+            // 改变父组件的值
+            this.props.changePageInfo({ pageSize: currPageSize, current: currPageNO })
         })
     }
     render() {
@@ -78,7 +90,7 @@ export default class BookLists extends React.Component {
             pageSize: pageSize,
             current: current,
             total: total,
-            onChange: (current) => this.changePage(current),// 这个current就是你点击的页码,这是antd封装好的,可以直接拿到页码
+            onChange: (newPage, newPageSize) => this.changePage(newPage, newPageSize),// 这个current就是你点击的页码,这是antd封装好的,可以直接拿到页码
         }
 
         return (
