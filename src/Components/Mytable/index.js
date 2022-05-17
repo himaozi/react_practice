@@ -36,8 +36,8 @@ const columns = [
         width: 200,
         render: (text, record) => (
             <Space size="middle">
-                <Button type="primary">编辑</Button>
-                <Button type="default">删除</Button>
+                <Button type="primary" >编辑</Button>
+                <Button type="default" >删除</Button>
             </Space>
         ),
     },
@@ -45,17 +45,12 @@ const columns = [
 
 
 export default class BookLists extends React.Component {
-    state = {
-        pageSize: 10,
-        current: 1,
-        total: 0,
-        selected: true,
-        bookList: [],
-    }
+    state = this.props.state
+    
 
     componentDidMount() {
-        const { pageSize, current } = this.state;
-        getPagedBooksList(current, pageSize).then(res => {
+        const { pageSize, current,book } = this.state;
+        getPagedBooksList(current, pageSize,book).then(res => {
             this.setState({
                 bookList: res.data.data.records,
                 total: res.data.data.total
@@ -63,10 +58,10 @@ export default class BookLists extends React.Component {
         })
     }
     changePage = (currPageNO) => {
-        const { pageSize } = this.state;
+        const { pageSize,book } = this.state;
         // state里的值的改变必须用setstate  值改变后 视图自动变化
         // react用一个公式来表示就是 UI=f(state) 我们只需要关系state的管理,UI由react去变化
-        getPagedBooksList(currPageNO, pageSize).then(res => {
+        getPagedBooksList(currPageNO, pageSize,book).then(res => {
             this.setState({
                 bookList: res.data.data.records,
                 total: res.data.data.total,
@@ -77,8 +72,8 @@ export default class BookLists extends React.Component {
     render() {
         const { total, pageSize, current } = this.state;
         const paginationProps = {
-            showSizeChanger: false,
-            showQuickJumper: false,
+            showSizeChanger: true,
+            showQuickJumper: true,
             showTotal: () => `共${total}条 `,
             pageSize: pageSize,
             current: current,

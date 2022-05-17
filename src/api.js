@@ -12,8 +12,8 @@ export function getBookList() {
  * 获取分页书籍
  * @returns 
  */
-export function getPagedBooksList(pageNO, pageSize) {
-    return axios.get(`/books/${pageNO}/${pageSize}`);
+export function getPagedBooksList(pageNO, pageSize,book) {
+    return axios.get(`/books/${pageNO}/${pageSize}`,{ params: book });
 }
 
 /**
@@ -23,3 +23,5 @@ export function getPagedBooksList(pageNO, pageSize) {
  export function queryBookByID(id) {
     return axios.get(`/books/${id}`);
 }
+
+

@@ -1,11 +1,26 @@
 import './App.css';
 import React from 'react';
 import BookLists from './Components/Mytable';
+import SearchBooks from './Components/SearchBooks';
 class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      pageSize: 10,
+      current: 1,
+      total: 0,
+      book:[],
+      bookList: [],
+  }
+
+  }
+  
+  changeState = (newBook) =>{
+    this.setState({
+      book:newBook,
+    })
+    console(newBook)
 
   }
 
@@ -13,10 +28,10 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          to do 这里是搜索栏
+        <SearchBooks changeBook={this.changeState}/>
         </header>
         <div className='App-content'>
-          < BookLists />
+          < BookLists  state={this.state} />
         </div>
       </div>
     );
