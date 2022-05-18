@@ -13,7 +13,7 @@ export function getBookList() {
  * book ={} 的写法是es6 默认参数的写法 在调用该方法的时候如果只传了2个参数 这个参数默认就会传入{}
  * @returns 
  */
-export function getPagedBooksList(pageNO, pageSize, book = {}) {
+export function getPagedBooksList(pageNO, pageSize, book) {
     return axios.get(`/books/${pageNO}/${pageSize}`, { params: book });
 }
 
@@ -25,4 +25,18 @@ export function queryBookByID(id) {
     return axios.get(`/books/${id}`);
 }
 
+// 按id删除图书
+export function DeleteBookByID(id) {
+    return axios.delete(`/books/${id}`);
+}
 
+// 编辑图书
+export function EditBook(book) {
+    return axios.put(`/books`,book);
+}
+
+
+// 增加图书
+export function AddBook(book) {
+    return axios.post(`/books`,book);
+}
