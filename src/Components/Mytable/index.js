@@ -11,6 +11,8 @@ export default class BookLists extends React.Component {
         super(props)
         this.bookParam={}
         
+        this.ChildRef=React.createRef();
+        
         
 
     }
@@ -83,9 +85,9 @@ newList=()=>{
 
 // 编辑图书
     editBooks = (record)=>{
-        
-        console.log(record)
-
+        this.bookForModal=record
+        console.log(this.bookForModal)
+        this.ChildRef.current.showModal(this.bookForModal)
     }
 
 // 删除图书
@@ -135,8 +137,7 @@ newList=()=>{
                     return(
                         
                     <Space size="middle">
-                    <EditModal book={record} newList={this.newList} />
-                    {/* <Button type="primary" onClick={() =>this.editBooks(record)}>编辑</Button> */}
+                    <Button type="primary" onClick={() =>this.editBooks(record)}>编辑</Button>
                     <Button type="default" onClick={() =>this.deleteBooks(record)}>删除</Button>
                 </Space>
         
@@ -161,6 +162,7 @@ newList=()=>{
                 
             <Table columns={columns} dataSource={this.state.bookList} pagination={paginationProps} />
             <AddBookModal newList={this.newList}/>
+            <EditModal ref={this.ChildRef}  newList={this.newList} />
 
             </div>
             

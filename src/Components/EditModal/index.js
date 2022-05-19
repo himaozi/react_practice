@@ -1,27 +1,37 @@
-import React, { useState } from 'react';
-import { Modal, Button,Form,Input} from 'antd';
+import React, { useState,useImperativeHandle } from 'react';
+import { Modal, Form,Input} from 'antd';
 import {EditBook } from '../../api';
 
 
-const EditModal = (props) => {
+
+const EditModal = (props,ref) => {
+  
+  const [bookInfo, setBookInfo] = useState();
+
+  
+  
     
-    const newBookInfo = props.book
+    
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const showModal = () => {
+  const showModal = (newBookInfo) => {
+   
       console.log('modal接收到了',newBookInfo)
       form.setFieldsValue({
           name:newBookInfo.name,
           type:newBookInfo.type,
           description:newBookInfo.description,
       })
-
+      setBookInfo(newBookInfo)
     setIsModalVisible(true);
   };
+  useImperativeHandle(ref,()=>({showModal}))
+
+ 
 
   const handleOk = () => {
       const book = form.getFieldValue()
-       book.id=newBookInfo.id
+       book.id=bookInfo.id
     //   进行编辑接口操作
     console.log(book)
     EditBook(book).then(res=>{
@@ -43,26 +53,21 @@ const EditModal = (props) => {
       span: 8,
     },
     wrapperCol: {
-      span: 16,
+      span: 4,
     },
   };
   
   const [form] = Form.useForm();
+ 
 
-  const onFinish = (values) => {
-    // 把收集的book参数作为props传给表格组件，进行异步操作生成表格和页码
-    
-    
-  };
 
   return (
     <>
-      <Button type="primary" onClick={()=>showModal()}>
-        编辑
-      </Button>
+      
       <Modal forceRender title="Basic Modal" visible={isModalVisible} onOk={()=>handleOk()} onCancel={handleCancel} afterClose={()=>props.newList()}>
-      <Form {...layout} form={form} name="control-hooks" onFinish={onFinish} >
+      <Form {...layout} form={form} name="control-hooks"  layout="inline" >
       <Form.Item
+      
         name="name"
         label="书名"
         rules={[
@@ -102,4 +107,4 @@ const EditModal = (props) => {
   );
 };
 
-export default EditModal;
+export default React.forwardRef(EditModal);

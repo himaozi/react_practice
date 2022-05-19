@@ -7,16 +7,16 @@ import { Form, Input, Button,Space } from 'antd';
 
 const layout = {
   labelCol: {
-    span: 8,
+    span: 4,
   },
   wrapperCol: {
-    span: 16,
+    span: 20,
   },
 };
 const tailLayout = {
   wrapperCol: {
-    offset: 8,
-    span: 16,
+    offset: 6,
+    span: 3,
   },
 };
 
@@ -38,7 +38,7 @@ const SearchBooks = (props) => {
 
 
   return (
-    <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
+    <Form {...layout} form={form} name="control-hooks" onFinish={onFinish} layout="inline">
       <Form.Item
         name="name"
         label="书名"
