@@ -1,110 +1,71 @@
-import React, { useState,useImperativeHandle } from 'react';
-import { Modal, Form,Input} from 'antd';
-import {EditBook } from '../../api';
+import React from 'react';
+import { Modal, Form, Input } from 'antd';
+import { EditBook } from '../../api';
 
-
-
-const EditModal = (props,ref) => {
-  
-  const [bookInfo, setBookInfo] = useState();
-
-  
-  
-    
-    
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = (newBookInfo) => {
-   
-      console.log('modal接收到了',newBookInfo)
-      form.setFieldsValue({
-          name:newBookInfo.name,
-          type:newBookInfo.type,
-          description:newBookInfo.description,
-      })
-      setBookInfo(newBookInfo)
-    setIsModalVisible(true);
-  };
-  useImperativeHandle(ref,()=>({showModal}))
-
- 
-
-  const handleOk = () => {
-      const book = form.getFieldValue()
-       book.id=bookInfo.id
-    //   进行编辑接口操作
-    console.log(book)
-    EditBook(book).then(res=>{
-        if(res.data.flag===true){
-            setIsModalVisible(false);
-        }
+class EditModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      visible: props.showEditModal,
+      editData: props.editData
+    }
+  }
+  // props变换时触发
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      visible: nextProps.showEditModal,
+      editData: nextProps.editData
     })
-    
+  }
 
-    
+  handleOk = () => {
+    // 进行编辑接口操作
+    const newBook = this.state.editData
+    console.log(newBook)
+    EditBook(newBook).then(res => {
+      if (res.data.flag === true) {
+        this.setState({
+          visible: false
+        })
+        this.props.toogleShow(false)
+      }
+    })
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
+  handleCancel = () => {
+    this.setState({
+      visible: false
+    })
+    this.props.toogleShow(false)
   };
+  changeName = (ev) => {
+    this.setState({
+      editData: { ...this.state.editData, name: ev.target.value }
+    })
+  }
+  changeType = (ev) => {
+    this.setState({
+      editData: { ...this.state.editData, type: ev.target.value }
+    })
+  }
+  changeDes = (ev) => {
+    this.setState({
+      editData: { ...this.state.editData, description: ev.target.value }
+    })
+  }
 
-  const layout = {
-    labelCol: {
-      span: 8,
-    },
-    wrapperCol: {
-      span: 4,
-    },
-  };
-  
-  const [form] = Form.useForm();
- 
+  // 表单的组件太繁琐了  我用了基本的input
+  render() {
+    const { visible, editData } = this.state;
+    const { name, type, description } = editData;
+    return (
+      <Modal title="Basic Modal" visible={visible} onOk={this.handleOk} onCancel={this.handleCancel} afterClose={this.props.newList}>
+        <div> <label>类型:</label> <Input onChange={this.changeType} value={type} /></div>
+        <div> <label>书名:</label> <Input onChange={this.changeName} value={name} /></div>
+        <div> <label>描述:</label> <Input onChange={this.changeDes} value={description} /></div>
+      </Modal >
+    );
+  }
+}
 
-
-  return (
-    <>
-      
-      <Modal forceRender title="Basic Modal" visible={isModalVisible} onOk={()=>handleOk()} onCancel={handleCancel} afterClose={()=>props.newList()}>
-      <Form {...layout} form={form} name="control-hooks"  layout="inline" >
-      <Form.Item
-      
-        name="name"
-        label="书名"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="type"
-        label="类型"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        name="description"
-        label="描述"
-        rules={[
-          {
-            required: false,
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-      
-    </Form>
-      </Modal>
-    </>
-  );
-};
-
-export default React.forwardRef(EditModal);
+export default EditModal;
